@@ -70,7 +70,7 @@ class NeuralNetwork:
         
     
     def predict(self, input):
-        return self.forwardpass(input)[0]
+        return int(np.round(self.forwardpass(input)[0])[0])
     
     def train(self, target, inputs):
         for epoch in  range(1000):
@@ -86,13 +86,18 @@ class NeuralNetwork:
                 np.savez(self.weight_file, weights_L1=self.weights_L1, weights_L2=self.weights_L2, weights_LOut=self.weights_LOut, bias_L1=self.bias_L1, bias_L2=self.bias_L2, bias_LOut=self.bias_LOut)
 
 
+i = input("Would you like to train the Network(Y/N):")
+nn = NeuralNetwork('weights.npz')
+train = True if i == 'Y' else False
 
-training_data = np.array([[0,0],
+if train:
+    training_data = np.array([[0,0],
                  [0,1],
                  [1,0],
                  [1,1]])
-
-target = np.array([0, 1, 1, 0])
-
-nn = NeuralNetwork('weights.npz')
-nn.train(target, training_data)
+    target = np.array([0, 1, 1, 0])
+    nn.train(target, training_data)
+else:
+    a = int(input("A: "))
+    b = int(input("B: "))
+    print(f"output= {nn.predict([a, b])}")

@@ -33,10 +33,10 @@ class NeuralNetwork:
     
     def forwardpass(self, input):
         z_L1 = np.dot(input, self.weights_L1.T) + self.bias_L1
-        a_L1 = NeuralNetwork.ReLU(z_L1)
+        a_L1 = np.tanh(z_L1)
         
         z_L2 = np.dot(a_L1, self.weights_L2.T) + self.bias_L2
-        a_L2 = NeuralNetwork.ReLU(z_L2)
+        a_L2 = np.tanh(z_L2)
         
         z_out = np.dot(a_L2, self.weights_LOut) + self.bias_LOut
         a_out = NeuralNetwork.sigmoid(z_out)
@@ -53,10 +53,10 @@ class NeuralNetwork:
         error = prediction - target
         blames_out = np.outer(scores[2], error)
         
-        d_L2 = (error * self.weights_LOut.flatten()) * (scores[2] > 0).astype(float)
+        d_L2 = (error * self.weights_LOut.flatten()) * (1- scores[2] ** 2)
         blames_L2 = np.outer(d_L2, scores[4])
         
-        d_L1 = np.dot(self.weights_L2.T, d_L2) * (scores[5] > 0).astype(float)
+        d_L1 = np.dot(self.weights_L2.T, d_L2) * (1- scores[5] ** 2)
         blames_L1 = np.outer(d_L1, inputs)
         
         self.weights_LOut -= blames_out * self.learning_rate

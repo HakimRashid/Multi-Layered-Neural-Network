@@ -2,7 +2,7 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 
-class NueralNetwork:
+class NeuralNetwork:
     
     def __init__(self, weights_file):
         self.weight_file = weights_file
@@ -33,13 +33,13 @@ class NueralNetwork:
     
     def forwardpass(self, input):
         z_L1 = np.dot(input, self.weights_L1.T) + self.bias_L1
-        a_L1 = NueralNetwork.ReLU(z_L1)
+        a_L1 = NeuralNetwork.ReLU(z_L1)
         
         z_L2 = np.dot(a_L1, self.weights_L2.T) + self.bias_L2
-        a_L2 = np.tanh(z_L2)
+        a_L2 = NeuralNetwork.ReLU(z_L2)
         
         z_out = np.dot(a_L2, self.weights_LOut) + self.bias_LOut
-        a_out = NueralNetwork.sigmoid(z_out)
+        a_out = NeuralNetwork.sigmoid(z_out)
         return a_out, z_out, a_L2, z_L2, a_L1, z_L1
 
 
@@ -53,7 +53,7 @@ class NueralNetwork:
         error = prediction - target
         blames_out = np.outer(scores[2], error)
         
-        d_L2 = (error * self.weights_LOut.flatten()) * (1- scores[2] ** 2)
+        d_L2 = (error * self.weights_LOut.flatten()) * (scores[2] > 0).astype(float)
         blames_L2 = np.outer(d_L2, scores[4])
         
         d_L1 = np.dot(self.weights_L2.T, d_L2) * (scores[5] > 0).astype(float)
@@ -94,5 +94,5 @@ training_data = np.array([[0,0],
 
 target = np.array([0, 1, 1, 0])
 
-nn = NueralNetwork('weights.npz')
+nn = NeuralNetwork('weights.npz')
 nn.train(target, training_data)
